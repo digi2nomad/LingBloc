@@ -20,7 +20,7 @@ def gen_video (clips_folder, audio_file, output_video):
     video_clip.write_videofile(output_video, fps=fps)
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3:
+    if len(sys.argv) < 4:
         print(f"Usage: <clips_folder> <audio_file> <output_video>")
         sys.exit(1)
 
