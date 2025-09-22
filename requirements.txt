@@ -1,4 +1,5 @@
+numpy
+protobuf
 Pillow==11.3.0
 moviepy==2.2.1 
-google_api_python_client==2.182.0
-google_generativeai==0.8.5
+google-genai==1.38.0

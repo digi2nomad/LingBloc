@@ -1,8 +1,4 @@
-"""
-Split audio file into smaller files in silent positions
-"""
 from moviepy import *
-import os,sys
 import numpy as np
 
 def find_silent_intervals(audio_clip, window_size=0.1, volume_threshold=0.01):
@@ -23,7 +19,7 @@ def find_silent_intervals(audio_clip, window_size=0.1, volume_threshold=0.01):
 
     for t in np.arange(0, audio_clip.duration, window_size):
         # Get audio data for the current window
-        sub_clip = audio_clip.subclip(t, min(t + window_size, audio_clip.duration))
+        sub_clip = audio_clip.subclipped(t, min(t + window_size, audio_clip.duration))
 
         # Calculate average volume (or RMS)
         # This is a simplified example; a more robust calculation might be needed
@@ -44,8 +40,14 @@ def find_silent_intervals(audio_clip, window_size=0.1, volume_threshold=0.01):
 
     return silent_intervals
 
-# Example usage:
-# video = VideoFileClip("my_video.mp4")
-# audio = video.audio
-# silent_parts = find_silent_intervals(audio)
-# print(f"Silent intervals: {silent_parts}")
+
+if __name__ == "__main__":
+    try:
+        audio = AudioFileClip("clips/small_audio.wav")
+        silent_parts = find_silent_intervals(audio)
+        print(f"Found {len(silent_parts)} silent intervals:")
+        for i, (start, end) in enumerate(silent_parts, 1):
+            print(f"Interval {i}: {start:.2f}s - {end:.2f}s (duration: {end - start:.2f}s)")
+        audio.close()
+    except Exception as e:
+        print(f"Error processing video: {str(e)}")
