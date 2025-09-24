@@ -1,7 +1,6 @@
-from moviepy import *
 from google import genai
 from google.genai import types
-import os,random,time
+import os,random,time,audio_file_split
 
 def test(client,model_name):
     response = client.models.generate_content(
@@ -10,19 +9,22 @@ def test(client,model_name):
     )
     print(response.text)
 
-def list_files(client):
+def list_uploaded_files(client):
     files = client.files.list()
     for file in files:
         print(" ", file.name)
 
-def get_file(client,filename): 
+def get_uploaded_file(client, filename):
     file = client.files.get(name=filename)
     print(" ", file.name)
 
-def delete_file(client,filename):
+def delete_uploaded_file(client, filename):
     client.files.delete(name=filename)
+    print(" ", filename, "deleted")
 
-def transcribe(client,model_name,uploaded_file):
+def transcribe(client,
+               model_name,
+               uploaded_file):
     max_retries = 3
     initial_delay = 1
     response = None
@@ -59,7 +61,7 @@ def transcribe(client,model_name,uploaded_file):
                 time.sleep(delay)
             else:
                 print(f"  have tried maximum times，give up: {uploaded_file.name}")
-
+    print(f"  transcribed: {uploaded_file.name}")
     return response.text
 
 def upload_file(audio_file):
@@ -95,20 +97,37 @@ def upload_file(audio_file):
         print(f"  File is now active and ready for use.")
     return uploaded_file
 
+def append_to_file(file_path, text):
+    with open(file_path, "a") as file:
+        file.write(text)
+
 def get_genai_client(api_key):
     try:
         return genai.Client(api_key=api_key)
     except Exception as e:
         return None
 
+def transcribe_audio_to_script(client,
+                               model_name,
+                               audio_file_path,
+                               script_file_path,
+                               work_dir):
+    audio_file_clip = audio_file_split.AudioFileClip(audio_file_path)
+    chunk_filenames  = audio_file_split.split_audio(audio_file_clip, work_dir)
+    for chunk_filename in chunk_filenames:
+        uploaded_file = upload_file(chunk_filename)
+        script = transcribe(client, model_name, uploaded_file)
+        append_to_file(script_file_path, script)
+        get_uploaded_file(client, uploaded_file.name)
+        delete_uploaded_file(client, uploaded_file.name)
+
 if __name__ == "__main__":
     api_key = os.environ['GOOGLE_API_KEY']
     client = get_genai_client(api_key)
     #test(client,"gemini-2.5-flash")
-    #list_files(client)
-
-    #uploaded_file = upload_file("clips/small_audio.wav")
-    #script = transcribe(client,"gemini-2.5-flash", uploaded_file)
-    #print(script)
-    #get_file(client, uploaded_file.name)
-    #delete_file(client, uploaded_file.name)
+    #list_uploaded_files(client)
+    transcribe_audio_to_script(client,
+                               model_name="gemini-2.5-flash",
+                               audio_file_path="clips/audio.mp4",
+                               script_file_path="clips/script.txt",
+                               work_dir="clips/audio_chunks")
