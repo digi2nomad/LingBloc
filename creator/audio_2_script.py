@@ -28,13 +28,13 @@ def transcribe(client,
     max_retries = 3
     initial_delay = 1
     response = None
-    last_exception = None # keep the last exception
-    prompt = """
-        Transcribe the audio, in the format of timestamp, speaker, caption.
-        use speaker A, speaker B, etc. to identify speakers. the timestamp
-        should be in the format of [MM:SS:ss]. Each caption sentence should 
-        not be too long to fit into one line of a screen.
+    prompt = f"""
+        You are a transcription service for video caption, please transcribe 
+        the audio file into  SRT (SubRip) file format, with accurate timestamps. 
+        Each sentence should be concise and clear and each sentence should not 
+        be too long in order to fit into one line of a screen.
         """
+    print(f"  transcribing {uploaded_file.name} with prompt:\n {prompt.strip()}")
     for attempt in range(max_retries): # try max_retries times
         try:
             response = client.models.generate_content(
@@ -62,9 +62,9 @@ def transcribe(client,
             else:
                 print(f"  have tried maximum times，give up: {uploaded_file.name}")
     print(f"  transcribed: {uploaded_file.name}")
-    return response.text
+    return response.text+"\n\n"
 
-def upload_file(audio_file):
+def upload_file(client, audio_file):
     max_retries = 3
     initial_delay = 1
     uploaded_file = None
@@ -97,9 +97,16 @@ def upload_file(audio_file):
         print(f"  File is now active and ready for use.")
     return uploaded_file
 
-def append_to_file(file_path, text):
+def process_script(script, start_time, end_time):
+    return script #modify the timestamp with start_time and end_time
+
+def append_to_script(file_path, text):
     with open(file_path, "a") as file:
         file.write(text)
+
+def delete_audio_chunk(file_path):
+    os.remove(file_path)
+    print(f"  deleted audio chunk: {file_path}")
 
 def get_genai_client(api_key):
     try:
@@ -113,13 +120,15 @@ def transcribe_audio_to_script(client,
                                script_file_path,
                                work_dir):
     audio_file_clip = audio_file_split.AudioFileClip(audio_file_path)
-    chunk_filenames  = audio_file_split.split_audio(audio_file_clip, work_dir)
-    for chunk_filename in chunk_filenames:
-        uploaded_file = upload_file(chunk_filename)
+    audio_chunk_list  = audio_file_split.split_audio(audio_file_clip, work_dir)
+    for audio_chunk in audio_chunk_list:
+        uploaded_file = upload_file(client, audio_chunk.filename)
         script = transcribe(client, model_name, uploaded_file)
-        append_to_file(script_file_path, script)
+        processed_script = process_script(script, audio_chunk.start_time, audio_chunk.end_time)
+        append_to_script(script_file_path, processed_script)
         get_uploaded_file(client, uploaded_file.name)
         delete_uploaded_file(client, uploaded_file.name)
+        delete_audio_chunk(audio_chunk.filename)
 
 if __name__ == "__main__":
     api_key = os.environ['GOOGLE_API_KEY']

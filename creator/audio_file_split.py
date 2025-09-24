@@ -2,6 +2,12 @@ from moviepy import *
 import numpy as np
 import math, os, pathlib
 
+class AudioChunk:
+    def __init__(self, filename, start_time, end_time):
+        self.filename = filename
+        self.start_time = start_time
+        self.end_time = end_time
+
 MAX_CHUNK_LENGTH = 5 * 60  # max chunk length (in seconds), default is 5 minutes
 MIN_SILENCE_LENGTH = 0.5 # min silence length (in seconds)
 SILENCE_THRESH = -40  # silence threshold (dB)
@@ -117,11 +123,11 @@ def find_split_points(audio_length,
     # Sort and remove duplicates, ensure points are within bounds
     split_points = sorted(list(set(p for p in split_points if 0 < p <= audio_length)))
 
-    print(f"resulting in {len(split_points)} split points (second)")
+    print(f"get {len(split_points)} split points (second)")
     return split_points
 
 def split_audio(audio_file,
-                output_dir,
+                work_dir,
                 max_chunk_length=MAX_CHUNK_LENGTH,
                 min_silence_len=MIN_SILENCE_LENGTH,
                 silence_thresh=SILENCE_THRESH):
@@ -129,9 +135,9 @@ def split_audio(audio_file,
     Split an audio file into smaller chunks using silence points
     and maximum chunk length constraints.
     """
-    pathlib.Path(output_dir).mkdir(parents=True, exist_ok=True)
+    pathlib.Path(work_dir).mkdir(parents=True, exist_ok=True)
 
-    print(f"audio file: {audio_file}")
+    print(f"audio file: {audio_file.filename}")
     total_length = get_audio_duration(audio_file)
     if total_length is None:
         print(f"error：cannot get audio length，cannot split {audio_file}")
@@ -145,7 +151,7 @@ def split_audio(audio_file,
     split_points = find_split_points(total_length, silence_points, max_chunk_length)
 
     # execute split
-    chunk_filenames = []
+    audio_chunk_list = []
     start_time = 0.0
     for i, end_time in enumerate(split_points):
         # Make sure the slice has a valid length
@@ -153,8 +159,8 @@ def split_audio(audio_file,
             print(f"  Skip invalid split points: {start_time:.2f}s -> {end_time:.2f}s")
             continue
 
-        chunk_filename = os.path.join(output_dir, f"chunk_{i+1:03d}.mp3")
-        chunk_filenames.append(chunk_filename)
+        chunk_filename = os.path.join(work_dir, f"chunk_{i + 1:03d}.mp3")
+        audio_chunk_list.append(AudioChunk(chunk_filename, start_time, end_time))
         duration = end_time - start_time
         print(f"Export chunk {i+1}/{len(split_points)}: {start_time:.2f}s - {end_time:.2f}s ({duration:.2f}s) -> {chunk_filename}")
         (audio_file.subclipped(start_time, end_time).write_audiofile(chunk_filename,
@@ -163,11 +169,11 @@ def split_audio(audio_file,
                                                                      logger=None))
         start_time = end_time # Update the start time of the next segment
 
-    if not chunk_filenames:
+    if not audio_chunk_list:
          print("error, failed to split audio")
          return []
-    print(f"finish splitting. generated {len(chunk_filenames)} chunks，Keep in {output_dir} folder")
-    return chunk_filenames
+    print(f"finish splitting. generated {len(audio_chunk_list)} chunks，Keep in {work_dir} folder")
+    return audio_chunk_list
 
 if __name__ == "__main__":
     try:
