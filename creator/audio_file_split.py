@@ -162,7 +162,7 @@ def split_audio(audio_file,
         chunk_filename = os.path.join(work_dir, f"chunk_{i + 1:03d}.mp3")
         audio_chunk_list.append(AudioChunk(chunk_filename, start_time, end_time))
         duration = end_time - start_time
-        print(f"Export chunk {i+1}/{len(split_points)}: {start_time:.2f}s - {end_time:.2f}s ({duration:.2f}s) -> {chunk_filename}")
+        print(f"export chunk {i+1}/{len(split_points)}: {start_time:.2f}s - {end_time:.2f}s ({duration:.2f}s) -> {chunk_filename}")
         (audio_file.subclipped(start_time, end_time).write_audiofile(chunk_filename,
                                                                      codec='mp3',
                                                                      bitrate='192k',
