@@ -1,7 +1,7 @@
 from google import genai
 from google.genai import types
 from datetime import datetime
-import os,random,time,io,re,audio_file_split
+import os,sys,random,time,io,re,audio_file_split
 
 def test(genai_client, model_name):
     response = genai_client.models.generate_content(
@@ -218,22 +218,19 @@ def transcribe_audio_to_script(genai_client,
         delete_audio_chunk(audio_chunk.filename)
 
 if __name__ == "__main__":
+    if len(sys.argv) < 4:
+        print(f"Usage:<input_audio_file> <output_script_file> <work_folder>")
+        sys.exit(1)
+
     try:
         api_key = os.environ['GOOGLE_API_KEY']
         client = get_genai_client(api_key)
-        #test(client,"gemini-2.5-flash")
-        #list_uploaded_files(client)
-        #h, m, s, ms = parse_timestamp_fields("04:23,300")
-        #print(calculate_time(h, m, s, ms, 263.62))
-        #with open("clips/script-saved-2.txt", "r") as file:
-        #    script = file.read()
-        #    script = adjust_timestamps(script, 263.62)
-        #    print(script)
         transcribe_audio_to_script(client,
                                    model_name="gemini-2.5-flash",
-                                   audio_file_path="clips/audio.mp4",
-                                   script_file_path="clips/script.txt",
-                                   work_dir="clips/audio_chunks")
+                                   audio_file_path=sys.argv[1], # "clips/audio.mp4",
+                                   script_file_path=sys.argv[2], #"clips/script.txt",
+                                   work_dir=sys.argv[3] #"clips/audio_chunks"
+                                   )
         client.close()
     except:
         pass

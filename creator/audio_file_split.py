@@ -1,6 +1,6 @@
 from moviepy import *
 import numpy as np
-import math, os, pathlib
+import math, os, sys, pathlib
 
 class AudioChunk:
     def __init__(self, filename, start_time, end_time):
@@ -176,20 +176,12 @@ def split_audio(audio_file,
     return audio_chunk_list
 
 if __name__ == "__main__":
+    if len(sys.argv) < 3:
+        print(f"Usage: <input_audio_file> <work_folder>")
+        sys.exit(1)
     try:
-        audioFileClip = AudioFileClip("clips/audio.mp4")
-        """
-        silent_points = find_silent_points(audio)
-        print(f"Found {len(silent_points)} silent points:")
-        for i, (start, end) in enumerate(silent_points, 1):
-            print(f"Point {i}: {start:.2f}s - {end:.2f}s (duration: {end - start:.2f}s)")
-
-        split_points = find_split_points(get_audio_duration(audio), silent_parts, MAX_CHUNK_LENGTH_SEC)
-        print(f"Split points: {len(split_points)} split points")
-        for i, split_point in enumerate(split_points, 1):
-            print(f"Split point {i}: {split_point:.2f}s")
-        """
-        split_audio(audioFileClip, "clips/audio_chunks")
+        audioFileClip = AudioFileClip(sys.argv[1]) #"clips/audio.mp4"
+        split_audio(audioFileClip, sys.argv[2]) #"clips/audio_chunks"
         audioFileClip.close()
     except Exception as e:
         print(f"Error processing video: {str(e)}")
