@@ -1,5 +1,7 @@
+google-api-python-client
+google-auth-oauthlib
+google-genai
 numpy
 protobuf
 Pillow==11.3.0
-moviepy==2.2.1 
-google-genai==1.39.0
+moviepy==2.2.1
