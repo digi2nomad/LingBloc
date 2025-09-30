@@ -1,21 +1,33 @@
 import sys
 from PIL import Image, ImageDraw, ImageFont
 
+PODCAST_NAME = "clips/podcast-name.txt"
+
 START_OFFSET_TEXT = (850, 105)
 TEXTCOLOR = (255, 0, 0, 255)
 LINE_SPACING = 140
 SEPARATOR = "|"
 
+
+def get_podcast_name():
+    with open(PODCAST_NAME, "r") as f:
+        return f.read().strip()
+
+
 class ThumbnailCreator:
     def __init__(self):
         raise NotImplementedError("Subclasses must implement this method")
+
     def get_template_file(self):
         raise NotImplementedError("Subclasses must implement this method")
+
     def get_font_file(self):
         raise NotImplementedError("Subclasses must implement this method")
+
     def get_output_file(self):
         raise NotImplementedError("Subclasses must implement this method")
-    def draw_trademark(self):
+
+    def draw_trademark(self, draw):
         raise NotImplementedError("Subclasses must implement this method")
 
     def create_thumbnail(self,
@@ -38,7 +50,7 @@ class ThumbnailCreator:
             top += i * line_spacing
             new_offset = (left, top)
             draw.text(new_offset, line, font=font, fill=text_color)
-        self.draw_trademark()
+        self.draw_trademark(draw)
         draw.line((0, 0, 0, 765), fill="yellow", width=10)
         draw.line((0, 0, 1410, 0), fill="yellow", width=10)
         draw.line((0, 765, 1410, 765), fill="yellow", width=10)
