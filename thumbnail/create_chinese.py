@@ -3,19 +3,14 @@ from PIL import Image, ImageDraw, ImageFont
 
 from thumbnail.create_thumbnail import ThumbnailCreator, get_podcast_name
 
-TEMPLATE = "clips/thumbnail-template.png"
 FONT_FILE = "font/HanyiSentyPagodaRegular.ttf"
 OUTPUT = "clips/thumbnail-chinese.png"
 
 class ThumbnailCreatorChinese(ThumbnailCreator):
-    def __init__(self, template=TEMPLATE, output=OUTPUT, font_file=FONT_FILE):
+    def __init__(self, output=OUTPUT, font_file=FONT_FILE):
         super().__init__()
-        self.template = template
         self.output = output
         self.font_file = font_file
-
-    def get_template_file(self):
-        return self.template
 
     def get_font_file(self):
         return self.font_file

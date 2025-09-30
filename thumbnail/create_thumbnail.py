@@ -2,7 +2,7 @@ import sys
 from PIL import Image, ImageDraw, ImageFont
 
 PODCAST_NAME = "clips/podcast-name.txt"
-
+TEMPLATE = "clips/thumbnail-template.png"
 START_OFFSET_TEXT = (850, 105)
 TEXTCOLOR = (255, 0, 0, 255)
 LINE_SPACING = 140
@@ -14,11 +14,12 @@ def get_podcast_name():
         return f.read().strip()
 
 
+def get_template_file():
+    return TEMPLATE
+
+
 class ThumbnailCreator:
     def __init__(self):
-        raise NotImplementedError("Subclasses must implement this method")
-
-    def get_template_file(self):
         raise NotImplementedError("Subclasses must implement this method")
 
     def get_font_file(self):
