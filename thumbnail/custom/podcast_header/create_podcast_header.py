@@ -9,7 +9,7 @@ def get_podcast_name():
 
 class PodcastHeaderCreator:
     def __init__(self):
-        raise NotImplementedError("Subclasses must implement this method")
+        pass
 
     def draw_trademark(self, draw):
         raise NotImplementedError("Subclasses must implement this method")
@@ -20,14 +20,13 @@ class PodcastHeaderCreator:
     def create_thumbnail(
             self,
             template=TEMPLATE,
-            output=get_output_file(),
             ):
         base = Image.open(template).convert('RGBA')
         image = Image.new('RGBA', base.size)
         draw = ImageDraw.Draw(image)
         self.draw_trademark(draw)
         out = Image.alpha_composite(base, image)
-        out.save(output)
+        out.save(self.get_output_file())
 
 if __name__ == "__main__":
     creator = PodcastHeaderCreator()

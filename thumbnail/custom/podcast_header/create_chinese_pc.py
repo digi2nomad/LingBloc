@@ -1,6 +1,6 @@
 from PIL import Image, ImageDraw, ImageFont
 
-from thumbnail.custom.podcast_header.create_podcast_header import PodcastHeaderCreator, get_podcast_name
+from create_podcast_header import PodcastHeaderCreator, get_podcast_name
 
 OUTPUT = "clips/thumbnail-pc-chinese.png"
 
@@ -22,4 +22,3 @@ class PodcastHeaderCreatorChinese(PodcastHeaderCreator):
 if __name__ == "__main__":
     creator = PodcastHeaderCreatorChinese()
     creator.create_thumbnail()
-
