@@ -1,3 +1,5 @@
 .idea/
 .ipynb_checkpoints/
 creator/__pycache__/
+thumbnail/__pycache__/
+clips/
