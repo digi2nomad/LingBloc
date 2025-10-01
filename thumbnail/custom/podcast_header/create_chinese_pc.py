@@ -13,7 +13,7 @@ class PodcastHeaderCreatorChinese(PodcastHeaderCreator):
                   font=ImageFont.truetype("font/HanyiSentyPagodaRegular.ttf", 85), fill="yellow")
         draw.text((100, 350), "深度的分析视角",
                   font=ImageFont.truetype("font/HanyiSentyPagodaRegular.ttf", 75), fill="red")
-        draw.text((20, 600), "Sampan Podcast",
+        draw.text((20, 600), get_podcast_name(),
                   font=ImageFont.truetype("font/Bohme-Rounded.ttf", 65), fill="white")
 
     def get_output_file(self):
