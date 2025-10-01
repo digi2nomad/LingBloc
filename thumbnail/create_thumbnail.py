@@ -20,7 +20,7 @@ def get_template_file():
 
 class ThumbnailCreator:
     def __init__(self):
-        raise NotImplementedError("Subclasses must implement this method")
+        pass
 
     def get_font_file(self):
         raise NotImplementedError("Subclasses must implement this method")
@@ -35,14 +35,12 @@ class ThumbnailCreator:
                          text,
                          font_size,
                          template=get_template_file(),
-                         output=get_output_file(),
-                         font_file=get_font_file(),
                          text_color=TEXTCOLOR,
                          start_offset=START_OFFSET_TEXT,
                          line_spacing=LINE_SPACING):
         base = Image.open(template).convert('RGBA')
         image = Image.new('RGBA', base.size)
-        font = ImageFont.truetype(font_file, font_size)
+        font = ImageFont.truetype(self.get_font_file(), font_size)
         draw = ImageDraw.Draw(image)
         offset = start_offset
 
@@ -57,7 +55,7 @@ class ThumbnailCreator:
         draw.line((0, 765, 1410, 765), fill="yellow", width=10)
         draw.line((1410, 765, 1410, 0), fill="yellow", width=20)
         out = Image.alpha_composite(base, image)
-        out.save(output)
+        out.save(self.get_output_file())
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:

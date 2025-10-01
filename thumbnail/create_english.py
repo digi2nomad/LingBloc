@@ -1,10 +1,10 @@
 import sys
 from PIL import Image, ImageDraw, ImageFont
 
-from thumbnail.create_thumbnail import ThumbnailCreator, get_podcast_name
+from create_thumbnail import ThumbnailCreator, get_podcast_name
 
 FONT_FILE = "font/Rockstar-ExtraBold.otf"
-OUTPUT = "image/thumbnail-english.png"
+OUTPUT = "clips/thumbnail-english.png"
 
 class ThumbnailCreatorEnglish(ThumbnailCreator):
     def __init__(self, output=OUTPUT, font_file=FONT_FILE):

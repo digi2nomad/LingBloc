@@ -1,7 +1,7 @@
 import sys
 from PIL import Image, ImageDraw, ImageFont
 
-from thumbnail.create_thumbnail import ThumbnailCreator, get_podcast_name
+from create_thumbnail import ThumbnailCreator, get_podcast_name
 
 FONT_FILE = "font/HanyiSentyPagodaRegular.ttf"
 OUTPUT = "clips/thumbnail-chinese.png"
