@@ -200,6 +200,11 @@ def get_genai_client(genai_api_key):
     except Exception as e:
         return None
 
+def delete_script_file(script_file_path):
+    if os.path.exists(script_file_path):
+        os.remove(script_file_path)
+        print(f"  deleted existing script file: {script_file_path}")
+
 def transcribe_audio_to_script(genai_client,
                                model_name,
                                audio_file_path,
@@ -208,6 +213,7 @@ def transcribe_audio_to_script(genai_client,
     audio_file_clip = audio_file_split.AudioFileClip(audio_file_path)
     audio_chunk_list  = audio_file_split.split_audio(audio_file_clip, work_dir)
     last_subtitle_number = 0
+    delete_script_file(script_file_path)
     for audio_chunk in audio_chunk_list:
         uploaded_file = upload_file(genai_client, audio_chunk.filename)
         srt_script = transcribe(genai_client, model_name, uploaded_file)
