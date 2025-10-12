@@ -5,7 +5,7 @@ import sys
 
 def add_subtitles(input_video_file, srt_file, output_video_file):
     generator = lambda text: TextClip(text,
-                                      font='font/font.ttf',
+                                      font='font/Gendy.otf',
                                       font_size=24,
                                       color='white')
     subtitles_clip = SubtitlesClip(srt_file, make_textclip=generator, encoding='utf-8')
