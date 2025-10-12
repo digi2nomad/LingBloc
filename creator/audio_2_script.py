@@ -1,7 +1,8 @@
 from google import genai
 from google.genai import types
 from datetime import datetime
-import os,sys,random,time,io,re,audio_file_split
+import os,sys,random,time,io,re
+from util import audio_file_split
 
 def test(genai_client, model_name):
     response = genai_client.models.generate_content(
