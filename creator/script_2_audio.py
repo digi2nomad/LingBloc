@@ -87,11 +87,10 @@ if __name__ == "__main__":
     srt_file = sys.argv[1]
     output_audio_file = sys.argv[2]
     work_folder = sys.argv[3]
-    if sys.argv[4]:
+    if len(sys.argv) > 6:
         spk1 = sys.argv[4] #speaker1
-    if sys.argv[5]:
         spk2 = sys.argv[5] #speaker2
-    if sys.argv[6]:
+    if len(sys.argv) > 7:
         spd = float(sys.argv[6]) #speed
 
     subtitles_chunks = srt_utils.divide_subtitles(srt_file)
