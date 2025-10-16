@@ -6,17 +6,19 @@ from google.genai import types
 
 from util import srt_utils, audio_file_merge
 
+style = "Read smoothly in a brisk, lower and knowledgable tone in NPR podcast style\n"
 
 def gen_audio(genai_client,
               text_content,
-              output_audio_file,
+              output_audio,
               speaker1,
               speaker2,
               speed=1.0):
     response = genai_client.models.generate_content(
     model="gemini-2.5-flash-preview-tts",
-    contents=text_content,
+    contents=style + text_content,
     config=types.GenerateContentConfig(
+    temperature=2,
     response_modalities=["AUDIO"],
     speech_config=types.SpeechConfig(
          multi_speaker_voice_config=types.MultiSpeakerVoiceConfig(
@@ -46,7 +48,7 @@ def gen_audio(genai_client,
     if not audio_data:
         raise Exception("Failed to generate audio")
 
-    wave_file(output_audio_file, audio_data, speed)
+    wave_file(output_audio, audio_data, speed)
 
 def wave_file(filename, pcm, speed=1.0, channels=1, rate=24000, sample_width=2):
    with wave.open(filename, "wb") as wf:
@@ -80,8 +82,8 @@ if __name__ == "__main__":
 
     api_key = os.environ['GOOGLE_API_KEY']
     client = get_genai_client(api_key)
-    spk1 = "Charon"
-    spk2 = "Despina"
+    spk1 = "Kore"
+    spk2 = "Orus"
     spd = 1.0
 
     srt_file = sys.argv[1]
@@ -100,3 +102,5 @@ if __name__ == "__main__":
         audio_chunk_files.append(audio_chunk_file)
         gen_audio(client, chunk, audio_chunk_file, spk1, spk2, spd)
     audio_file_merge.merge_audio(audio_chunk_files, output_audio_file)
+    for audio_chunk_file in audio_chunk_files:
+        os.remove(audio_chunk_file)
